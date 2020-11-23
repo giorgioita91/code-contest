@@ -301,25 +301,58 @@ class App extends Component {
                 />
               </div>
               <div className="orderBy">
-                <form>{/* TODO Insert here the order by select */}</form>
+                <form>
+                  {/* TODO Insert here the order by select */}
+                  <select>
+                    <option value={this.onSelectOrderBy.type}></option>
+                    {/* <option value={}></option> */}
+                    {/* <option value={}></option> */}
+                  </select>
+                </form>
               </div>
               <div className="chatList">
                 {this.searchUser
-                  .filter(user => user.username !== this.state.user)
+                  .filter((user) => user.username !== this.state.user)
                   .map((user, i) => {
-                  console.log(user);
-                  {/* TODO Insert here the chatpreview */}
-                  return(
-                    <ChatPreview key={i} title={user.name} lastMessage={this.checkListMessages}/>
-                    )
+                    console.log(user);
+                    {
+                      /* TODO Insert here the chatpreview */
+                    }
+                    return (
+                      <ChatPreview
+                        key={i}
+                        title={user.username}
+                        lastMessage={{
+                          message:
+                            this.state.rooms[user.username] &&
+                            this.state.rooms[user.username].lastMessage
+                              ? this.state.rooms[user.username].lastMessage.msg
+                              : "",
+                          time:
+                            this.state.rooms[user.username] &&
+                            this.state.rooms[user.username].lastMessage
+                              ? this.state.rooms[user.username].lastMessage.ts
+                              : "",
+                        }}
+                        status={user.status}
+                        active={
+                          this.state.activeUser.username === user.username
+                        }
+                        onClick={() => {
+                          this.createDirectMessageChat(user.username);
+                          this.setState({
+                            activeUser: user,
+                            messageValue: "",
+                          });
+                        }}
+                      />
+                    );
                   })}
               </div>
             </div>
             <div className="chatPanel">
               {this.state.activeUser.username && (
-                <div className="chatPanelInfo">
-                   
-                </div>
+                <div className="chatPanelInfo"></div>
               )}
               <div className="messageList">
                 {this.state.rooms[this.state.activeUser.username] &&
