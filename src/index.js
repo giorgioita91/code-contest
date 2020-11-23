@@ -218,6 +218,20 @@ class App extends Component {
     });
   };
 
+  handleChange(e){
+    this.setState({
+      value: e.target.value
+    })
+  }
+
+  handleChangeSubmit(e){
+    e.preventDefault();
+    this.setState({
+      {state}
+    })
+  }
+
+
   render() {
     return (
       <div className="Chat">
@@ -278,7 +292,7 @@ class App extends Component {
                 <span className={`userStatus ${this.state.userStatus}`} />
               </div>
               <div className="searchBoxContainer">
-                <SearchBox value={this.state.searchValue} onSubmit={this.searchUser}/>
+                <SearchBox value={this.state.searchValue} onSubmit={this.handleChangeSubmit} onChange={this.handleChange}/>
               </div>
               <div className="orderBy">
                 <form>{/* TODO Insert here the order by select */}</form>
