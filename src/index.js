@@ -1,29 +1,29 @@
-import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { ChatPreview, SendBox, SearchBox, Message } from './ui';
-import { launchWebSocket, Api } from './helpers';
-import './styles.css';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import { ChatPreview, SendBox, SearchBox, Message } from "./ui";
+import { launchWebSocket, Api } from "./helpers";
+import "./styles.css";
 
 class App extends Component {
   state = {
-    messageValue: '',
-    authToken: '',
-    userId: '',
-    user: '',
-    userStatus: 'offline',
-    username: 'demo',
-    password: 'demo',
+    messageValue: "",
+    authToken: "",
+    userId: "",
+    user: "",
+    userStatus: "offline",
+    username: "demo",
+    password: "demo",
     showPassword: false,
     listUsers: [],
     activeUser: {},
     rooms: {},
-    searchValue: '',
-    orderByValue: 'nameDESC'
+    searchValue: "",
+    orderByValue: "nameDESC",
   };
 
   get searchUser() {
     return this.state.searchValue.length
-      ? this.state.listUsers.filter(user =>
+      ? this.state.listUsers.filter((user) =>
           user.username.includes(this.state.searchValue)
         )
       : this.state.listUsers;
@@ -39,20 +39,20 @@ class App extends Component {
 
   checkListMessages = () => {
     setInterval(() => {
-      this.state.listUsers.forEach(user => {
+      this.state.listUsers.forEach((user) => {
         this.updateStatus(user.username);
       });
     }, 10000);
   };
 
-  callApiLogin = e => {
+  callApiLogin = (e) => {
     e.preventDefault();
-    console.log('login', this.state);
+    console.log("login", this.state);
     return Api.login({
       username: this.state.username,
-      password: this.state.password
+      password: this.state.password,
     })
-      .then(responseJson => {
+      .then((responseJson) => {
         if (responseJson.error) {
           console.warn({ responseJson });
           return;
@@ -62,7 +62,7 @@ class App extends Component {
           {
             authToken: responseJson.data.authToken,
             userId: responseJson.data.userId,
-            user: responseJson.data.me.username
+            user: responseJson.data.me.username,
           },
           () => {
             this.fetchRooms({ userId: responseJson.data.userId });
@@ -71,17 +71,17 @@ class App extends Component {
           }
         );
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
   checkLoggedinUserInfo = () => {
     return Api.fetchUserInfo({ userId: this.state.userId }).then(
-      responseJson => {
+      (responseJson) => {
         //console.log('me', responseJson);
         this.setState({
-          userStatus: responseJson.status
+          userStatus: responseJson.status,
         });
       }
     );
@@ -89,91 +89,91 @@ class App extends Component {
 
   fetchRooms = () => {
     return Api.fetchRooms({ userId: this.state.userId })
-      .then(responseJson => {
+      .then((responseJson) => {
         console.log(responseJson);
         this.setState({
-          listUsers: responseJson.users
+          listUsers: responseJson.users,
         });
-        responseJson.users.forEach(user => {
+        responseJson.users.forEach((user) => {
           this.createDirectMessageChat(user.username);
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  callApiPostMessage = e => {
+  callApiPostMessage = (e) => {
     e.preventDefault();
     const { userId, messageValue: message, activeRoom } = this.state;
     this.setState({
-      messageValue: ''
+      messageValue: "",
     });
     Api.sendMessage({
       userId,
       message,
-      activeRoom
+      activeRoom,
     })
-      .then(responseJson => {
+      .then((responseJson) => {
         this.callApiRoomMessages(this.state.activeUser.username);
         this.createDirectMessageChat(this.state.activeUser.username);
       })
-      .catch(error => {
-        console.error('Errore: ' + error);
+      .catch((error) => {
+        console.error("Errore: " + error);
       });
   };
 
-  updateStatus = username => {
+  updateStatus = (username) => {
     this.callApiRoomMessages(username);
   };
 
-  callApiRoomMessages = username => {
+  callApiRoomMessages = (username) => {
     const { userId } = this.state;
     return Api.fetchRoomMessages({ username, userId })
-      .then(responseJson => {
-        this.setState(prevState => ({
+      .then((responseJson) => {
+        this.setState((prevState) => ({
           rooms: {
             ...prevState.rooms,
             [username]: {
               ...prevState.rooms[username],
               lastMessage: responseJson.messages[0],
-              messages: responseJson.messages
-            }
-          }
+              messages: responseJson.messages,
+            },
+          },
         }));
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  createDirectMessageChat = username => {
+  createDirectMessageChat = (username) => {
     return Api.createChatWith({ username, userId: this.state.userId })
-      .then(responseJson => {
+      .then((responseJson) => {
         this.setState(
-          prevState => ({
+          (prevState) => ({
             rooms: {
               ...prevState.rooms,
               [username]: {
                 room: responseJson.room._id,
                 username: username,
                 lastMessage: responseJson.room.lastMessage,
-                messages: []
-              }
+                messages: [],
+              },
             },
-            activeRoom: responseJson.room._id
+            activeRoom: responseJson.room._id,
           }),
           () => this.callApiRoomMessages(username)
         );
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  onSelectOrderBy = type => {
+  onSelectOrderBy = (type) => {
     let arrayToSort = this.state.listUsers;
-    if (type === 'nameDESC') {
+    if (type === "nameDESC") {
       arrayToSort.sort(function(a, b) {
         var nameA = a.username.toUpperCase();
         var nameB = b.username.toUpperCase();
@@ -186,7 +186,7 @@ class App extends Component {
         return 0;
       });
     }
-    if (type === 'nameASC') {
+    if (type === "nameASC") {
       arrayToSort.sort(function(a, b) {
         var nameA = a.username.toUpperCase();
         var nameB = b.username.toUpperCase();
@@ -199,7 +199,7 @@ class App extends Component {
         return 0;
       });
     }
-    if (type === 'status') {
+    if (type === "status") {
       arrayToSort.sort(function(a, b) {
         var nameA = a.status.toUpperCase();
         var nameB = b.status.toUpperCase();
@@ -214,7 +214,7 @@ class App extends Component {
     }
     this.setState({
       listUsers: arrayToSort,
-      orderByValue: type
+      orderByValue: type,
     });
   };
 
@@ -229,7 +229,7 @@ class App extends Component {
                 <div>
                   <input
                     value={this.state.username}
-                    onChange={e => {
+                    onChange={(e) => {
                       this.setState({ username: e.target.value });
                     }}
                     type="text"
@@ -239,20 +239,20 @@ class App extends Component {
                   <div className="inputPasswordContainer">
                     <input
                       value={this.state.password}
-                      onChange={e =>
+                      onChange={(e) =>
                         this.setState({ password: e.target.value })
                       }
-                      type={this.state.showPassword ? 'text' : 'password'}
+                      type={this.state.showPassword ? "text" : "password"}
                     />
                     <span
                       className="ShowButtonPassword"
                       onClick={() =>
                         this.setState({
-                          showPassword: !this.state.showPassword
+                          showPassword: !this.state.showPassword,
                         })
                       }
                     >
-                      {this.state.showPassword ? 'nascondi' : 'mostra'}
+                      {this.state.showPassword ? "nascondi" : "mostra"}
                     </span>
                   </div>
                 </div>
@@ -278,21 +278,18 @@ class App extends Component {
                 <span className={`userStatus ${this.state.userStatus}`} />
               </div>
               <div className="searchBoxContainer">
-                {/* TODO Insert here the search box */}
+                <SearchBox value={this.state.searchValue} onSubmit={this.searchUser}/>
               </div>
               <div className="orderBy">
-                <form>
-                  {/* TODO Insert here the order by select */}
-                </form>
+                <form>{/* TODO Insert here the order by select */}</form>
               </div>
-              <div className="chatList">
+              {/* <div className="chatList">
                 {this.searchUser
                   .filter(user => user.username !== this.state.user)
-                  .map((user, i) => {
-                    {/* TODO Insert here the chat preview */}
+                  .map((user, i) => { //da inserire graffe
                     return null;
                   })}
-              </div>
+              </div> */}
             </div>
             <div className="chatPanel">
               {this.state.activeUser.username && (
@@ -308,8 +305,10 @@ class App extends Component {
               <div className="messageList">
                 {this.state.rooms[this.state.activeUser.username] &&
                   this.state.rooms[this.state.activeUser.username].messages.map(
-                    message => {
-                      {/* TODO Insert here the messages */}
+                    (message) => {
+                      {
+                        /* TODO Insert here the messages */
+                      }
                       return null;
                     }
                   )}
@@ -327,5 +326,5 @@ class App extends Component {
   }
 }
 
-const rootElement = document.getElementById('root');
+const rootElement = document.getElementById("root");
 ReactDOM.render(<App />, rootElement);
