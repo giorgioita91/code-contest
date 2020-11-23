@@ -11,8 +11,8 @@ class App extends Component {
     userId: "",
     user: "",
     userStatus: "offline",
-    username: "demo",
-    password: "demo",
+    username: "team6",
+    password: "cambiala",
     showPassword: false,
     listUsers: [],
     activeUser: {},
@@ -218,19 +218,16 @@ class App extends Component {
     });
   };
 
-  handleChange(e){
-    this.setState({
-      value: e.target.value
-    })
-  }
+  // handleChange(e) {
+  //   this.setState({
+  //     searchValue: e.target.value,
+  //   });
+  // }
 
-  handleChangeSubmit(e){
-    e.preventDefault();
-    this.setState({
-      {state}
-    })
-  }
-
+  // handleChangeSubmit(e) {
+  //   e.preventDefault();
+  //   this.setState(this.state);
+  // }
 
   render() {
     return (
@@ -292,28 +289,36 @@ class App extends Component {
                 <span className={`userStatus ${this.state.userStatus}`} />
               </div>
               <div className="searchBoxContainer">
-                <SearchBox value={this.state.searchValue} onSubmit={this.handleChangeSubmit} onChange={this.handleChange}/>
+                <SearchBox
+                  placeholder="Seach User"
+                  onChange={(e) =>
+                    this.setState({ searchValue: e.target.value })
+                  }
+                  value={this.state.searchValue}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                  }}
+                />
               </div>
               <div className="orderBy">
                 <form>{/* TODO Insert here the order by select */}</form>
               </div>
-              {/* <div className="chatList">
+              <div className="chatList">
                 {this.searchUser
                   .filter(user => user.username !== this.state.user)
-                  .map((user, i) => { //da inserire graffe
-                    return null;
+                  .map((user, i) => {
+                  console.log(user);
+                  {/* TODO Insert here the chatpreview */}
+                  return(
+                    <ChatPreview key={i} title={user.name} lastMessage={this.checkListMessages}/>
+                    )
                   })}
-              </div> */}
+              </div>
             </div>
             <div className="chatPanel">
               {this.state.activeUser.username && (
                 <div className="chatPanelInfo">
-                  <ChatPreview
-                    title={this.state.activeUser.username}
-                    status={this.state.activeUser.status}
-                    active={false}
-                    onClick={() => {}}
-                  />
+                   
                 </div>
               )}
               <div className="messageList">
