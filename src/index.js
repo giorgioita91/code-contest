@@ -104,7 +104,7 @@ class App extends Component {
   };
 
   callApiPostMessage = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     const { userId, messageValue: message, activeRoom } = this.state;
     this.setState({
       messageValue: "",
@@ -302,11 +302,13 @@ class App extends Component {
               </div>
               <div className="orderBy">
                 <form>
-                  {/* TODO Insert here the order by select */}
-                  <select>
-                    <option value={this.onSelectOrderBy.type}></option>
-                    {/* <option value={}></option> */}
-                    {/* <option value={}></option> */}
+                  <select
+                    value={this.state.orderByValue}
+                    onChange={(e) => this.onSelectOrderBy(e.target.value)}
+                  >
+                    <option value="nameDESC">Name DESC</option>
+                    <option value="nameASC">Name ASC</option>
+                    <option value="status">Status</option>
                   </select>
                 </form>
               </div>
@@ -314,10 +316,10 @@ class App extends Component {
                 {this.searchUser
                   .filter((user) => user.username !== this.state.user)
                   .map((user, i) => {
-                    console.log(user);
                     {
                       /* TODO Insert here the chatpreview */
                     }
+
                     return (
                       <ChatPreview
                         key={i}
@@ -358,6 +360,7 @@ class App extends Component {
                 {this.state.rooms[this.state.activeUser.username] &&
                   this.state.rooms[this.state.activeUser.username].messages.map(
                     (message) => {
+                      console.log(message);
                       {
                         /* TODO Insert here the messages */
                       }
@@ -367,7 +370,18 @@ class App extends Component {
               </div>
               {this.state.activeUser.username && (
                 <div className="sendBoxContainer">
-                  {/* TODO Insert here the sendbox */}
+                  <SendBox
+                    placeholder="Invia messaggio"
+                    onChange={(e) =>
+                      this.setState({ messageValue: e.target.value })
+                    }
+                    value={this.state.messageValue}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      this.callApiPostMessage()
+                      //this.createDirectMessageChat(this.state.rooms)
+                    }}
+                  />
                 </div>
               )}
             </div>
