@@ -104,7 +104,7 @@ class App extends Component {
   };
 
   callApiPostMessage = (e) => {
-    // e.preventDefault();
+    e.preventDefault();
     const { userId, messageValue: message, activeRoom } = this.state;
     this.setState({
       messageValue: "",
@@ -218,16 +218,13 @@ class App extends Component {
     });
   };
 
-  // handleChange(e) {
-  //   this.setState({
-  //     searchValue: e.target.value,
-  //   });
-  // }
-
-  // handleChangeSubmit(e) {
-  //   e.preventDefault();
-  //   this.setState(this.state);
-  // }
+  controlReceived = () => {
+    if(this.state.rooms[this.state.activeUser.username]){
+      return true
+    }else{
+      return false
+    }
+  }
 
   render() {
     return (
@@ -359,28 +356,25 @@ class App extends Component {
               <div className="messageList">
                 {this.state.rooms[this.state.activeUser.username] &&
                   this.state.rooms[this.state.activeUser.username].messages.map(
-                    (message) => {
-                      console.log(message);
+                    (message, index) => {
                       {
                         /* TODO Insert here the messages */
+                        console.log(message);
                       }
-                      return null;
+                      return <Message message={message.msg} key={index} dateMessage={message.ts} received={message.groupable}/>;
                     }
                   )}
               </div>
+
               {this.state.activeUser.username && (
                 <div className="sendBoxContainer">
                   <SendBox
-                    placeholder="Invia messaggio"
+                    placeholder="Insert Message"
                     onChange={(e) =>
                       this.setState({ messageValue: e.target.value })
                     }
                     value={this.state.messageValue}
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      this.callApiPostMessage()
-                      //this.createDirectMessageChat(this.state.rooms)
-                    }}
+                    onSubmit={this.callApiPostMessage}
                   />
                 </div>
               )}
